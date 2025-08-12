@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <section class="add-section">
+        <form action="{{ url_for('add_task') }}" method="POST" class="task-form">
+            <input type="text" name="task_name" placeholder="Add a task (e.g. 'Read 30 min')" required>
+            <button type="submit">Add</button>
+        </form>
+    </section>
+
+    <section class="tasks-section">
+        {% if tasks %}
+            <ul class="task-list">
+                {% for t in tasks %}
+                    <li class="task-item {% if t.completed_today %}completed-today{% endif %}">
+                        <div class="left">
+                            <div class="title">{{ t.name }}</div>
+                            <div class="meta">Created: {{ t.created_at }} • Completions: {{ t.total_completions }}</div>
+                        </div>
+
+                        <div class="actions">
+                            <form action="{{ url_for('complete_task', task_id=t.id) }}" method="POST" style="display:inline">
+                                <button class="btn" type="submit">
+                                    {% if t.completed_today %}Undo Today{% else %}Mark Done Today{% endif %}
+                                </button>
+                            </form>
+
+                            <form action="{{ url_for('delete_task', task_id=t.id) }}" method="POST" style="display:inline">
+                                <button class="btn danger" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No tasks yet — add one above to start your 100 day challenge.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
